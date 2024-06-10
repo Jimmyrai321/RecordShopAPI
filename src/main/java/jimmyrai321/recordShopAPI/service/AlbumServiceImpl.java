@@ -15,26 +15,33 @@ public class AlbumServiceImpl implements AlbumService{
     @Autowired
     private AlbumRepo albumRepo;
 
-    private List<Album> albumList= new ArrayList<>();
+
 
     @Override
     public List<Album> getAllAlbums() {
-
+        List<Album> albumList= new ArrayList<>();
         albumRepo.findAll().forEach(album -> {
             if (album.getStock().getStockCount()>0){
                 albumList.add(album);
             }
         });
+        //System.out.println(albumList);
         return albumList;
     }
 
     @Override
     public Album getAlbumByName(String name) {
-
-        albumRepo.findAll().forEach(album -> albumList.add(album));
+        List<Album> albumList= new ArrayList<>();
+        albumRepo.findAll().forEach(albumList::add);
         Optional<Album> result = albumList.stream().filter(a -> a.getName().equalsIgnoreCase(name))
                 .findFirst();
         return result.orElse(null);
+    }
+
+    @Override
+    public Album getAlbumByID(long id) {
+        Optional<Album> album = albumRepo.findById(id);
+        return album.orElse(null);
     }
 
 
