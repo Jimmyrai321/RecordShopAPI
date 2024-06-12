@@ -11,4 +11,6 @@ public interface AlbumService {
     Album getAlbumByName(String name);
 
     Album getAlbumByID(long id);
+
+    Album addAlbum(Album album);
 }

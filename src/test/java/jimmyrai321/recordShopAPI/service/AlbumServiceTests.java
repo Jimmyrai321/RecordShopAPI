@@ -4,6 +4,7 @@ import jimmyrai321.recordShopAPI.model.Album;
 import jimmyrai321.recordShopAPI.model.Genre;
 import jimmyrai321.recordShopAPI.model.Stock;
 import jimmyrai321.recordShopAPI.repository.AlbumRepo;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,15 +26,15 @@ class AlbumServiceTests {
     AlbumServiceImpl albumServiceImpl;
 
     @Test
+    @DisplayName("GET all albums")
     void getAllAlbums() {
         //ARRANGE
-        Stock stock1 = new Stock(); Stock stock2 = new Stock();
-        stock1.setStockCount(10); stock2.setStockCount(8);
-
+        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        album1.setStock(new Stock(1L,10,album1));
+        album2.setStock(new Stock(2L,8,album2));
         List<Album> testList = new java.util.ArrayList<>(List.of(
-                new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!", stock1),
-                new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!", stock2)
-        ));
+                album1,album2));
         when(mockAlbumRepo.findAll()).thenReturn(testList);
 
         //ACT
@@ -42,29 +43,38 @@ class AlbumServiceTests {
         //ASSERT
         assertIterableEquals(testList,result);
 
-        //-------TEST CASE 2------
-        //ARRANGE
-        stock2.setStockCount(0);
-
-        //ACT
-        List<Album> result2 = albumServiceImpl.getAllAlbums();
-        testList.remove(1);
-
-        //ASSERT
-
-        assertIterableEquals(testList,result2);
     }
 
     @Test
+    @DisplayName("GET all albums in stock")
+    void getAlbumIfStock(){
+        //ARRANGE
+        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        album1.setStock(new Stock(1L,10,album1));
+        album2.setStock(new Stock(2L,0,album2));
+        List<Album> testList = new java.util.ArrayList<>(List.of(
+                album1,album2));
+        when(mockAlbumRepo.findAll()).thenReturn(testList);
+
+        //ACT
+        List<Album> result = albumServiceImpl.getAllAlbums();
+        testList.remove(1);
+
+        //ASSERT
+        assertIterableEquals(testList,result);
+    }
+
+    @Test
+    @DisplayName("GET album by name")
     void getAlbumByName() {
         //ARRANGE
-        Stock stock1 = new Stock(); Stock stock2 = new Stock();
-        stock1.setStockCount(10); stock2.setStockCount(8);
-
+        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        album1.setStock(new Stock(1L,10,album1));
+        album2.setStock(new Stock(2L,8,album2));
         List<Album> testList = new java.util.ArrayList<>(List.of(
-                new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!", stock1),
-                new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!", stock2)
-        ));
+                album1,album2));
         when(mockAlbumRepo.findAll()).thenReturn(testList);
 
         //ACT
@@ -72,28 +82,37 @@ class AlbumServiceTests {
 
         //ASSERT
         assertEquals("Third Avenue",result.getName());
-
-        //-------TEST CASE 2 --------
-
-        //ARRANGE
-
-        //ACT
-        Album result2 = albumServiceImpl.getAlbumByName("fdjjjggj");
-
-        //ASSERT
-        assertNull(result2);
     }
 
     @Test
+    @DisplayName("return null if name querying doesn't exist")
+    void getAlbumByNameSAD(){
+        //ARRANGE
+        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        album1.setStock(new Stock(1L,10,album1));
+        album2.setStock(new Stock(2L,8,album2));
+        List<Album> testList = new java.util.ArrayList<>(List.of(
+                album1,album2));
+        when(mockAlbumRepo.findAll()).thenReturn(testList);
+
+        //ACT
+        Album result = albumServiceImpl.getAlbumByName("fdjjjggj");
+
+        //ASSERT
+        assertNull(result);
+    }
+
+    @Test
+    @DisplayName("GET album by id")
     void getAlbumByID() {
         //ARRANGE
-        Stock stock1 = new Stock(); Stock stock2 = new Stock();
-        stock1.setStockCount(10); stock2.setStockCount(8);
-
+        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        album1.setStock(new Stock(1L,10,album1));
+        album2.setStock(new Stock(2L,8,album2));
         List<Album> testList = new java.util.ArrayList<>(List.of(
-                new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!", stock1),
-                new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!", stock2)
-        ));
+                album1,album2));
         when(mockAlbumRepo.findById(1L)).thenReturn(Optional.ofNullable(testList.getFirst()));
 
         //ACT
@@ -101,15 +120,36 @@ class AlbumServiceTests {
 
         //ASSERT
         assertEquals("Fredo",result.getArtist());
+    }
 
+    @Test
+    @DisplayName("GET id that doesn't exist")
+    void getAlbumByIDSAD() {
+        //ARRANGE
+        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        album1.setStock(new Stock(1L,10,album1));
+        album2.setStock(new Stock(2L,8,album2));
+        List<Album> testList = new java.util.ArrayList<>(List.of(
+                album1,album2));
 
-        // ------TEST CASE 2 --------
+        when(mockAlbumRepo.findById(1L)).thenReturn(Optional.ofNullable(testList.getFirst()));
+
+        //ACT
+        Album result = albumServiceImpl.getAlbumByID(3);
+
+        //ASSERT
+        assertNull(result);
+    }
+
+    @Test
+    @DisplayName("POST new album")
+    void addAlbum(){
         //ARRANGE
 
         //ACT
-        Album result2 = albumServiceImpl.getAlbumByID(3);
 
         //ASSERT
-        assertNull(result2);
     }
+
 }

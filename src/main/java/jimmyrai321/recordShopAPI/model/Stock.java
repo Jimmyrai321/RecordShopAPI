@@ -1,30 +1,27 @@
 package jimmyrai321.recordShopAPI.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Table(name = "Stock")
-@Data //abstracts getter and setter and toString methods
+@Table(name = "stock")
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Stock {
 
     @Id
-    @Column(name = "album_id")
-    private long id;
+    @Column(name="album_id")
+    private Long id;
+
+    @Column(columnDefinition = "integer default 0")
+    private int stock_count;
 
     @OneToOne
     @MapsId
     @JoinColumn(name = "album_id")
     private Album album;
-
-    @Column
-    int stockCount;
-
 
 }

@@ -2,16 +2,16 @@ package jimmyrai321.recordShopAPI.model;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.antlr.v4.runtime.misc.NotNull;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "album")
-@Data //abstracts getter and setter and toString methods
+@Table(name = "albums")
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -22,10 +22,11 @@ public class Album {
     @Column(name = "id")
     private long id;
 
-    @Column
+
+    @Column(nullable = false)
     String name;
 
-    @Column
+    @Column(nullable = false)
     String artist;
 
     @Column
@@ -36,6 +37,7 @@ public class Album {
 
     @Column
     String albumInfo;
+
 
     @OneToOne(mappedBy = "album",cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn

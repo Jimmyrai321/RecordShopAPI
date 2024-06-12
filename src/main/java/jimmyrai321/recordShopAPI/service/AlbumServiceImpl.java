@@ -21,7 +21,7 @@ public class AlbumServiceImpl implements AlbumService{
     public List<Album> getAllAlbums() {
         List<Album> albumList= new ArrayList<>();
         albumRepo.findAll().forEach(album -> {
-            if (album.getStock().getStockCount()>0){
+            if (album.getStock().getStock_count()>0){
                 albumList.add(album);
             }
         });
@@ -42,6 +42,11 @@ public class AlbumServiceImpl implements AlbumService{
     public Album getAlbumByID(long id) {
         Optional<Album> album = albumRepo.findById(id);
         return album.orElse(null);
+    }
+
+    @Override
+    public Album addAlbum(Album newAlbum) {
+        return albumRepo.save(newAlbum);
     }
 
 
