@@ -1,7 +1,10 @@
 package jimmyrai321.recordShopAPI.controller;
 
+import jakarta.validation.Valid;
 import jimmyrai321.recordShopAPI.model.Album;
+import jimmyrai321.recordShopAPI.model.Stock;
 import jimmyrai321.recordShopAPI.service.AlbumService;
+import jimmyrai321.recordShopAPI.service.DTO.AlbumDto;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,9 +45,32 @@ public class AlbumController {
     }
 
     @PostMapping
-    public ResponseEntity<Album> postAlbum(@RequestBody Album postedAlbum){
-        Album addedAlbum = albumService.addAlbum(postedAlbum);
-        return new ResponseEntity<>(addedAlbum,HttpStatus.CREATED);
+    public ResponseEntity<AlbumDto> postAlbum(@Valid @RequestBody AlbumDto albumDto){
+
+        Album newAlbum = new Album();
+        newAlbum.setName(albumDto.getName());
+        newAlbum.setArtist(albumDto.getArtist());
+        newAlbum.setReleaseYear(albumDto.getReleaseYear());
+        newAlbum.setGenre(albumDto.getGenre());
+        newAlbum.setAlbumInfo(albumDto.getAlbumInfo());
+        Stock newStock = new Stock();
+        newStock.setId(newAlbum.getId());
+        newStock.setAlbum(newAlbum);
+        newStock.setStock_count(albumDto.getStock_count());
+        newAlbum.setStock(newStock);
+        Album savedAlbum = albumService.addAlbum(newAlbum);
+
+        AlbumDto albumResponse = new AlbumDto();
+        albumResponse.setMessage("✔ Album added successfully");
+        albumResponse.setId(savedAlbum.getId());
+        albumResponse.setName(savedAlbum.getName());
+        albumResponse.setArtist(savedAlbum.getArtist());
+        albumResponse.setReleaseYear(savedAlbum.getReleaseYear());
+        albumResponse.setGenre(savedAlbum.getGenre());
+        albumResponse.setAlbumInfo(savedAlbum.getAlbumInfo());
+        albumResponse.setStock_count(savedAlbum.getStock().getStock_count());
+
+        return new ResponseEntity<>(albumResponse,HttpStatus.CREATED);
 
     }
 

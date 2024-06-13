@@ -3,6 +3,7 @@ package jimmyrai321.recordShopAPI.service;
 import jimmyrai321.recordShopAPI.model.Album;
 import jimmyrai321.recordShopAPI.repository.AlbumRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,8 +39,10 @@ public class AlbumServiceImpl implements AlbumService{
         return result.orElse(null);
     }
 
+    @Cacheable("cached")
     @Override
     public Album getAlbumByID(long id) {
+        //System.out.println("Running repo"); //Testing cache
         Optional<Album> album = albumRepo.findById(id);
         return album.orElse(null);
     }
