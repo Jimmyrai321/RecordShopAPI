@@ -1,16 +1,18 @@
 package jimmyrai321.recordShopAPI.service;
 
 import jimmyrai321.recordShopAPI.model.Album;
+import jimmyrai321.recordShopAPI.service.DTO.GetAlbumDto;
+import jimmyrai321.recordShopAPI.service.DTO.PostAlbumDto;
 
 import java.util.List;
 
 public interface AlbumService {
 
-    List<Album> getAllAlbums();
+    List<GetAlbumDto> getAllAlbums();
 
-    Album getAlbumByName(String name);
+    List<GetAlbumDto> getAlbumByName(String name);
 
-    Album getAlbumByID(long id);
+    PostAlbumDto getAlbumByID(long id);
 
-    Album addAlbum(Album album);
+    PostAlbumDto addAlbum(PostAlbumDto album);
 }

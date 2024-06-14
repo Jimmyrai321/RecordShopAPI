@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class AlbumDto {
+public class PostAlbumDto {
 
     private Long id;
 
@@ -38,7 +38,8 @@ public class AlbumDto {
 
     private String message;
 
-    public AlbumDto(String name, String artist, Integer release_year, Genre genre, String album_info, Integer stock_count) {
+    public PostAlbumDto(Long id, String name, String artist, Integer release_year, Genre genre, String album_info, Integer stock_count) {
+        this.id=id;
         this.name = name;
         this.artist = artist;
         this.release_year = release_year;
