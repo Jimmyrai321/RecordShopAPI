@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jimmyrai321.recordShopAPI.model.Genre;
 import jimmyrai321.recordShopAPI.model.Stock;
 import jimmyrai321.recordShopAPI.service.AlbumServiceImpl;
-import jimmyrai321.recordShopAPI.service.DTO.AlbumDto;
+import jimmyrai321.recordShopAPI.service.DTO.GetAlbumDto;
+import jimmyrai321.recordShopAPI.service.DTO.PostAlbumDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,11 +48,10 @@ class AlbumControllerTests {
         mapper = new ObjectMapper();
     }
 
-    private static List<Album> getAlbumList() {
-        Album album1 = new Album(1L, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
-        Album album2 = new Album(2L, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
-        album1.setStock(new Stock(1L,10,album1));
-        album2.setStock(new Stock(2L,8,album2));
+    private static List<GetAlbumDto> getAlbumList() {
+        GetAlbumDto album1 = new GetAlbumDto(1L, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",10);
+        GetAlbumDto album2 = new GetAlbumDto(2L, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",8 );
+
         return new java.util.ArrayList<>(List.of(
                 album1,album2));
     }
@@ -60,35 +60,35 @@ class AlbumControllerTests {
     @DisplayName("GET all albums if no param passed in url")
     void getAllAlbums() throws Exception {
         //ARRANGE
-        List<Album> testList = getAlbumList();
+        List<GetAlbumDto> testList = getAlbumList();
         when(albumService.getAllAlbums()).thenReturn(testList);
 
         //ACT AND ASSERT
         mockMvcController.perform(MockMvcRequestBuilders.get("/api/v1/albums"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Loose"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Third Avenue"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].artist").value("Dave"));
 
     }
 
     @Test
-    @DisplayName("GET Album by query parameter")
+    @DisplayName("GET Album by query parameter name")
     void getAlbumByName() throws Exception {
         //ARRANGE
-        List<Album> testList = getAlbumList();
-        when(albumService.getAlbumByName("Loose")).thenReturn(testList.getFirst());
+        List<GetAlbumDto> testList = getAlbumList();
+        when(albumService.getAlbumByName("Third Avenue")).thenReturn(testList);
 
         //ACT AND ASSERT
-        mockMvcController.perform(MockMvcRequestBuilders.get("/api/v1/albums?name=Loose"))
+        mockMvcController.perform(MockMvcRequestBuilders.get("/api/v1/albums?name=Third Avenue"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Loose"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Third Avenue"));
     }
 
     @Test
     @DisplayName("GET album by id")
     void getAlbumByID() throws Exception {
         //ARRANGE
-        List<Album> testList = getAlbumList();
+        List<GetAlbumDto> testList = getAlbumList();
         when(albumService.getAlbumByID(2)).thenReturn(testList.get(1));
 
         //ACT AND ASSERT
@@ -111,10 +111,9 @@ class AlbumControllerTests {
     @DisplayName("POST new album")
     public void postJoke() throws Exception {
         //ARRANGE
-        Album album =  new Album(2L, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "ALBUM-INFO", null);
-        album.setStock(new Stock(2L,10,album));
-        when(albumService.addAlbum(album)).thenReturn(album);
+        PostAlbumDto album =  new PostAlbumDto(2L, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "ALBUM-INFO", 5);
 
+        when(albumService.addAlbum(album)).thenReturn(album);
         //ACT
         mockMvcController.perform(MockMvcRequestBuilders.post("/api/v1/albums")
                         .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")
@@ -131,7 +130,7 @@ class AlbumControllerTests {
     @DisplayName("POST new album SAD")
     public void postJokeError() throws Exception {
         //ARRANGE
-        AlbumDto album =  new AlbumDto("Psychodrama", "Dave", 2019, Genre.HIPHOP, "ALBUM-INFO", -5);
+        PostAlbumDto album =  new PostAlbumDto(3L,"Psychodrama", "Dave", 2019, Genre.HIPHOP, "ALBUM-INFO", -5);
 
 
         //ACT AND ASSERT
