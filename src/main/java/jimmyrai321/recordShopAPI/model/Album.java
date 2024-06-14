@@ -3,10 +3,7 @@ package jimmyrai321.recordShopAPI.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.hibernate.annotations.ColumnDefault;
 
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "albums")
@@ -20,7 +17,7 @@ public class Album {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
 
     @Column(nullable = false)
@@ -30,13 +27,13 @@ public class Album {
     String artist;
 
     @Column
-    int releaseYear;
+    Integer release_year;
 
     @Column
     Genre genre;
 
     @Column
-    String albumInfo;
+    String album_info;
 
 
     @OneToOne(mappedBy = "album",cascade = CascadeType.ALL)

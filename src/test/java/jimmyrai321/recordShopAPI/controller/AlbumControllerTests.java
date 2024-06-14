@@ -4,13 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jimmyrai321.recordShopAPI.model.Genre;
 import jimmyrai321.recordShopAPI.model.Stock;
 import jimmyrai321.recordShopAPI.service.AlbumServiceImpl;
-import org.apache.coyote.Response;
+import jimmyrai321.recordShopAPI.service.DTO.AlbumDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,8 +48,8 @@ class AlbumControllerTests {
     }
 
     private static List<Album> getAlbumList() {
-        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
-        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        Album album1 = new Album(1L, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2L, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
         album1.setStock(new Stock(1L,10,album1));
         album2.setStock(new Stock(2L,8,album2));
         return new java.util.ArrayList<>(List.of(
@@ -128,7 +127,20 @@ class AlbumControllerTests {
 
     }
 
+    @Test
+    @DisplayName("POST new album SAD")
+    public void postJokeError() throws Exception {
+        //ARRANGE
+        AlbumDto album =  new AlbumDto("Psychodrama", "Dave", 2019, Genre.HIPHOP, "ALBUM-INFO", -5);
 
+
+        //ACT AND ASSERT
+        mockMvcController.perform(MockMvcRequestBuilders.post("/api/v1/albums")
+                        .contentType(MediaType.APPLICATION_JSON).characterEncoding("utf-8")
+                        .content(mapper.writeValueAsString(album))) //serializes joke to json string so mvcController can accept and work with it.
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 
 
 }

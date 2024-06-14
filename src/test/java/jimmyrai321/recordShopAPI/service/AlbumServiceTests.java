@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DataJpaTest
 class AlbumServiceTests {
@@ -29,8 +29,8 @@ class AlbumServiceTests {
     @DisplayName("GET all albums")
     void getAllAlbums() {
         //ARRANGE
-        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
-        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        Album album1 = new Album(1L, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2L, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
         album1.setStock(new Stock(1L,10,album1));
         album2.setStock(new Stock(2L,8,album2));
         List<Album> testList = new java.util.ArrayList<>(List.of(
@@ -49,8 +49,8 @@ class AlbumServiceTests {
     @DisplayName("GET all albums in stock")
     void getAlbumIfStock(){
         //ARRANGE
-        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
-        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        Album album1 = new Album(1L, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2L, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
         album1.setStock(new Stock(1L,10,album1));
         album2.setStock(new Stock(2L,0,album2));
         List<Album> testList = new java.util.ArrayList<>(List.of(
@@ -69,8 +69,8 @@ class AlbumServiceTests {
     @DisplayName("GET album by name")
     void getAlbumByName() {
         //ARRANGE
-        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
-        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        Album album1 = new Album(1L, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2L, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
         album1.setStock(new Stock(1L,10,album1));
         album2.setStock(new Stock(2L,8,album2));
         List<Album> testList = new java.util.ArrayList<>(List.of(
@@ -88,8 +88,8 @@ class AlbumServiceTests {
     @DisplayName("return null if name querying doesn't exist")
     void getAlbumByNameSAD(){
         //ARRANGE
-        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
-        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        Album album1 = new Album(1L, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2L, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
         album1.setStock(new Stock(1L,10,album1));
         album2.setStock(new Stock(2L,8,album2));
         List<Album> testList = new java.util.ArrayList<>(List.of(
@@ -107,8 +107,8 @@ class AlbumServiceTests {
     @DisplayName("GET album by id")
     void getAlbumByID() {
         //ARRANGE
-        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
-        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        Album album1 = new Album(1L, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2L, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
         album1.setStock(new Stock(1L,10,album1));
         album2.setStock(new Stock(2L,8,album2));
         List<Album> testList = new java.util.ArrayList<>(List.of(
@@ -126,8 +126,8 @@ class AlbumServiceTests {
     @DisplayName("GET id that doesn't exist")
     void getAlbumByIDSAD() {
         //ARRANGE
-        Album album1 = new Album(1, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
-        Album album2 = new Album(2, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
+        Album album1 = new Album(1L, "Third Avenue", "Fredo", 2019, Genre.HIPHOP, "This is a test album info!",null);
+        Album album2 = new Album(2L, "Psychodrama", "Dave", 2019, Genre.HIPHOP, "This is a test Album Info!",null );
         album1.setStock(new Stock(1L,10,album1));
         album2.setStock(new Stock(2L,8,album2));
         List<Album> testList = new java.util.ArrayList<>(List.of(
@@ -146,10 +146,11 @@ class AlbumServiceTests {
     @DisplayName("POST new album")
     void addAlbum(){
         //ARRANGE
-
+        Album album = new Album(1L,"PsychoDrama","Dave",2019,Genre.HIPHOP,"I am album info",null);
         //ACT
-
+        albumServiceImpl.addAlbum(album);
         //ASSERT
+        verify(mockAlbumRepo,times(1)).save(album);
     }
 
 }
