@@ -5,12 +5,15 @@ import jimmyrai321.recordShopAPI.model.Stock;
 import jimmyrai321.recordShopAPI.repository.AlbumRepo;
 import jimmyrai321.recordShopAPI.service.DTO.GetAlbumDto;
 import jimmyrai321.recordShopAPI.service.DTO.PostAlbumDto;
+import jimmyrai321.recordShopAPI.service.DTO.PutAlbumDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -53,14 +56,14 @@ public class AlbumServiceImpl implements AlbumService{
 
     @Cacheable("cached")
     @Override
-    public PostAlbumDto getAlbumByID(long id) {
+    public GetAlbumDto getAlbumByID(long id) {
         //System.out.println("Running repo"); //Testing cache
         Optional<Album> album = albumRepo.findById(id);
         if(album.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"[!] No album exist at id: ("+ id+ ")!");
         }
         Album result = album.get();
-        return new PostAlbumDto(result.getId(),result.getName(),result.getArtist(), result.getRelease_year(),result.getGenre(),result.getAlbum_info(),result.getStock().getStock_count());
+        return new GetAlbumDto(result.getId(),result.getName(),result.getArtist(), result.getRelease_year(),result.getGenre(),result.getAlbum_info(),result.getStock().getStock_count());
     }
 
     @Override
@@ -91,5 +94,39 @@ public class AlbumServiceImpl implements AlbumService{
         return albumResponse;
     }
 
+    @Override
+    public PutAlbumDto updateAlbum(Long id, PutAlbumDto updateData) {
+        Album album;
+        if (albumRepo.existsById(id)) {
+            album = albumRepo.findById(id).get();
+            if (updateData.getId() != null) {
+                album.setId(updateData.getId());
+            }
+            if (updateData.getName() != null) {
+                album.setName(updateData.getName());
+            }
+            if (updateData.getArtist() != null) {
+                album.setArtist(updateData.getArtist());
+            }
+            if (updateData.getAlbum_info() != null) {
+                album.setAlbum_info(updateData.getAlbum_info());
+            }
+            if (updateData.getGenre() != null) {
+                album.setGenre(updateData.getGenre());
+            }
+            if (updateData.getRelease_year() != null) {
+                album.setRelease_year(updateData.getRelease_year());
+            }
+            if (updateData.getStock_count() != null) {
+                album.getStock().setStock_count(updateData.getStock_count());
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"[!] Album at id: "+id+" doesn't exist!");
+        }
+        albumRepo.save(album);
+
+        return new PutAlbumDto(album.getId(), album.getName(), album.getArtist(), album.getRelease_year(), album.getGenre(),
+                album.getAlbum_info(), album.getStock().getStock_count(), "✔ Updated Album id: " + id + " successfully!");
+    }
 
 }

@@ -6,6 +6,7 @@ import jimmyrai321.recordShopAPI.model.Stock;
 import jimmyrai321.recordShopAPI.service.AlbumService;
 import jimmyrai321.recordShopAPI.service.DTO.PostAlbumDto;
 import jimmyrai321.recordShopAPI.service.DTO.GetAlbumDto;
+import jimmyrai321.recordShopAPI.service.DTO.PutAlbumDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,9 +44,14 @@ public class AlbumController {
 
     @PostMapping
     public ResponseEntity<PostAlbumDto> postAlbum(@Valid @RequestBody PostAlbumDto postAlbumDto){
+        PostAlbumDto addedAlbum = albumService.addAlbum(postAlbumDto);
+        return new ResponseEntity<>(addedAlbum,HttpStatus.CREATED);
 
-        return new ResponseEntity<>(albumService.addAlbum(postAlbumDto),HttpStatus.CREATED);
+    }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<PutAlbumDto> putAlbum(@PathVariable Long id, @Valid @RequestBody PutAlbumDto body){
+        return new ResponseEntity<>(albumService.updateAlbum(id,body),HttpStatus.OK);
     }
 
 }
