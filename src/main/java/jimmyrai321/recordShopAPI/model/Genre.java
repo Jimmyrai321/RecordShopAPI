@@ -1,5 +1,7 @@
 package jimmyrai321.recordShopAPI.model;
 
+import java.util.Arrays;
+
 public enum Genre {
     COUNTRY,
     ELECTRONIC,
@@ -15,5 +17,9 @@ public enum Genre {
     REGGAE,
     ROCK,
     POP,
-    INDIE
+    INDIE;
+
+    public static boolean isValid(String name) {
+        return Arrays.stream(values()).anyMatch(e -> e.name().equals(name));
+    }
 }

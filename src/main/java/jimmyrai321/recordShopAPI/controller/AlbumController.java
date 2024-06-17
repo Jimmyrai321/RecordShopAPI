@@ -1,8 +1,7 @@
 package jimmyrai321.recordShopAPI.controller;
 
 import jakarta.validation.Valid;
-import jimmyrai321.recordShopAPI.model.Album;
-import jimmyrai321.recordShopAPI.model.Stock;
+import jimmyrai321.recordShopAPI.model.Genre;
 import jimmyrai321.recordShopAPI.service.AlbumService;
 import jimmyrai321.recordShopAPI.service.DTO.PostAlbumDto;
 import jimmyrai321.recordShopAPI.service.DTO.GetAlbumDto;
@@ -11,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/albums")
@@ -25,14 +22,23 @@ public class AlbumController {
     private AlbumService albumService;
 
     @GetMapping
-    public ResponseEntity<List<GetAlbumDto>> getAlbums(@RequestParam (value = "name", required = false) String name){
-      List<GetAlbumDto> getAlbumDtos;
-        if (name == null){
-            getAlbumDtos = albumService.getAllAlbums();
-        }else {
-            getAlbumDtos = albumService.getAlbumByName(name);
+    public ResponseEntity<?> getAlbums(@RequestParam (value = "name",required = false) String name,
+                                       @RequestParam (value = "artist", required = false) String artist,
+                                       @RequestParam(value = "release_year", required = false) Integer release_year,
+                                       @RequestParam(value = "genre", required = false) String genre) {
+        List<GetAlbumDto> getAlbumDtos;
+        if(name!=null){
+            return new ResponseEntity<>(albumService.getAlbumInfoByName(name),HttpStatus.OK);
+        }else if(artist != null) {
+            return new ResponseEntity<>(albumService.getAlbumsByArtist(artist),HttpStatus.OK);
+        }else if(release_year != null){
+            return new ResponseEntity<>(albumService.getAlbumsByRelease(release_year),HttpStatus.OK);
+        }else if(genre != null){
+            return new ResponseEntity<>(albumService.getAlbumsByGenre(Genre.valueOf(genre)),HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(albumService.getAllAlbums(),HttpStatus.OK);
         }
-        return new ResponseEntity<>(getAlbumDtos,HttpStatus.OK);
+
 
     }
 
@@ -52,6 +58,11 @@ public class AlbumController {
     @PutMapping("/{id}")
     public ResponseEntity<PutAlbumDto> putAlbum(@PathVariable Long id, @Valid @RequestBody PutAlbumDto body){
         return new ResponseEntity<>(albumService.updateAlbum(id,body),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteAlbum(@PathVariable Long id){
+        return new ResponseEntity<>(albumService.removeAlbum(id),HttpStatus.OK);
     }
 
 }

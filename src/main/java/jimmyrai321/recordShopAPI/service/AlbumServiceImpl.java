@@ -1,6 +1,7 @@
 package jimmyrai321.recordShopAPI.service;
 
 import jimmyrai321.recordShopAPI.model.Album;
+import jimmyrai321.recordShopAPI.model.Genre;
 import jimmyrai321.recordShopAPI.model.Stock;
 import jimmyrai321.recordShopAPI.repository.AlbumRepo;
 import jimmyrai321.recordShopAPI.service.DTO.GetAlbumDto;
@@ -10,13 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,7 +37,7 @@ public class AlbumServiceImpl implements AlbumService{
     }
 
     @Override
-    public List<GetAlbumDto> getAlbumByName(String name) {
+    public Map<String,String> getAlbumInfoByName(String name) {
 
         List<Album> albumList= new ArrayList<>();
         albumRepo.findAll().forEach(albumList::add);
@@ -49,14 +46,21 @@ public class AlbumServiceImpl implements AlbumService{
         if (result.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "[!] Album '" + name + "' not found in database! ");
         }
-
-        return result.stream().map(a -> new GetAlbumDto(a.getId(),a.getName(),a.getArtist(),
-                a.getRelease_year(),a.getGenre(),a.getAlbum_info(),a.getStock().getStock_count())).toList();
+        Map<String,String> albumInfo = new LinkedHashMap<>();
+        albumInfo.put("[↓](Album name)","[↓](Album info)");
+        int counter = 1;
+        for(Album a : result){
+            albumInfo.put(counter+". "+a.getName(),a.getAlbum_info());
+            counter++;
+        }
+        return albumInfo;
     }
+
+
 
     @Cacheable("cached")
     @Override
-    public GetAlbumDto getAlbumByID(long id) {
+    public GetAlbumDto getAlbumByID(Long id) {
         //System.out.println("Running repo"); //Testing cache
         Optional<Album> album = albumRepo.findById(id);
         if(album.isEmpty()){
@@ -64,6 +68,45 @@ public class AlbumServiceImpl implements AlbumService{
         }
         Album result = album.get();
         return new GetAlbumDto(result.getId(),result.getName(),result.getArtist(), result.getRelease_year(),result.getGenre(),result.getAlbum_info(),result.getStock().getStock_count());
+    }
+
+    @Override
+    public List<GetAlbumDto> getAlbumsByArtist(String artist) {
+        List<Album> albumList= new ArrayList<>();
+        albumRepo.findAll().forEach(albumList::add);
+        List<Album> result = albumList.stream().filter(a -> a.getArtist().equalsIgnoreCase(artist))
+                .toList();
+        if (result.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "[!] Album from artist: '" + artist + "' not found in database! ");
+        }
+        return result.stream().map(a -> new GetAlbumDto(a.getId(),a.getName(),a.getArtist(),
+                a.getRelease_year(),a.getGenre(),a.getAlbum_info(),a.getStock().getStock_count())).toList();
+    }
+
+    @Override
+    public List<GetAlbumDto> getAlbumsByRelease(Integer release_year) {
+        List<Album> albumList= new ArrayList<>();
+        albumRepo.findAll().forEach(albumList::add);
+        List<Album> result = albumList.stream().filter(a -> Objects.equals(a.getRelease_year(), release_year))
+                .toList();
+        if (result.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "[!] Album from year: '" + release_year + "' not found in database! ");
+        }
+        return result.stream().map(a -> new GetAlbumDto(a.getId(),a.getName(),a.getArtist(),
+                a.getRelease_year(),a.getGenre(),a.getAlbum_info(),a.getStock().getStock_count())).toList();
+    }
+
+    @Override
+    public List<GetAlbumDto> getAlbumsByGenre(Genre genre) {
+        List<Album> albumList= new ArrayList<>();
+        albumRepo.findAll().forEach(albumList::add);
+        List<Album> result = albumList.stream().filter(a -> a.getGenre().equals(genre))
+                .toList();
+        if (result.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "[!] Album from genre: '" + genre + "' not found in database! ");
+        }
+        return result.stream().map(a -> new GetAlbumDto(a.getId(),a.getName(),a.getArtist(),
+                a.getRelease_year(),a.getGenre(),a.getAlbum_info(),a.getStock().getStock_count())).toList();
     }
 
     @Override
@@ -99,9 +142,6 @@ public class AlbumServiceImpl implements AlbumService{
         Album album;
         if (albumRepo.existsById(id)) {
             album = albumRepo.findById(id).get();
-            if (updateData.getId() != null) {
-                album.setId(updateData.getId());
-            }
             if (updateData.getName() != null) {
                 album.setName(updateData.getName());
             }
@@ -125,8 +165,18 @@ public class AlbumServiceImpl implements AlbumService{
         }
         albumRepo.save(album);
 
-        return new PutAlbumDto(album.getId(), album.getName(), album.getArtist(), album.getRelease_year(), album.getGenre(),
+        return new PutAlbumDto(album.getId(),album.getName(), album.getArtist(), album.getRelease_year(), album.getGenre(),
                 album.getAlbum_info(), album.getStock().getStock_count(), "✔ Updated Album id: " + id + " successfully!");
+    }
+
+    @Override
+    public String removeAlbum(Long id) {
+        if(albumRepo.existsById(id)){
+            albumRepo.deleteById(id);
+        }else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"[!] Cannot delete album "+id+" as it doesn't exist!");
+        }
+        return "✔ Album "+id+" deleted successfully!";
     }
 
 }
