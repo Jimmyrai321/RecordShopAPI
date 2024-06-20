@@ -1,5 +1,6 @@
 package jimmyrai321.recordShopAPI.service;
 
+import jimmyrai321.recordShopAPI.exceptions.NotFoundException;
 import jimmyrai321.recordShopAPI.model.Album;
 import jimmyrai321.recordShopAPI.model.Genre;
 import jimmyrai321.recordShopAPI.model.Stock;
@@ -44,7 +45,7 @@ public class AlbumServiceImpl implements AlbumService{
         List<Album> result = albumList.stream().filter(a -> a.getName().equalsIgnoreCase(name))
                 .toList();
         if (result.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "[!] Album '" + name + "' not found in database! ");
+            throw new NotFoundException("[!] Album '" + name + "' not found in database! ");
         }
         Map<String,String> albumInfo = new LinkedHashMap<>();
         albumInfo.put("[↓](Album name)","[↓](Album info)");
@@ -64,7 +65,7 @@ public class AlbumServiceImpl implements AlbumService{
         //System.out.println("Running repo"); //Testing cache
         Optional<Album> album = albumRepo.findById(id);
         if(album.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"[!] No album exist at id: ("+ id+ ")!");
+            throw new NotFoundException("[!] No album exist at id: ("+ id+ ")!");
         }
         Album result = album.get();
         return new GetAlbumDto(result.getId(),result.getName(),result.getArtist(), result.getRelease_year(),result.getGenre(),result.getAlbum_info(),result.getStock().getStock_count());
@@ -77,7 +78,7 @@ public class AlbumServiceImpl implements AlbumService{
         List<Album> result = albumList.stream().filter(a -> a.getArtist().equalsIgnoreCase(artist))
                 .toList();
         if (result.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "[!] Album from artist: '" + artist + "' not found in database! ");
+            throw new NotFoundException("[!] Album from artist: '" + artist + "' not found in database! ");
         }
         return result.stream().map(a -> new GetAlbumDto(a.getId(),a.getName(),a.getArtist(),
                 a.getRelease_year(),a.getGenre(),a.getAlbum_info(),a.getStock().getStock_count())).toList();
@@ -90,7 +91,7 @@ public class AlbumServiceImpl implements AlbumService{
         List<Album> result = albumList.stream().filter(a -> Objects.equals(a.getRelease_year(), release_year))
                 .toList();
         if (result.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "[!] Album from year: '" + release_year + "' not found in database! ");
+            throw new NotFoundException("[!] Album from year: '" + release_year + "' not found in database! ");
         }
         return result.stream().map(a -> new GetAlbumDto(a.getId(),a.getName(),a.getArtist(),
                 a.getRelease_year(),a.getGenre(),a.getAlbum_info(),a.getStock().getStock_count())).toList();
@@ -103,7 +104,7 @@ public class AlbumServiceImpl implements AlbumService{
         List<Album> result = albumList.stream().filter(a -> a.getGenre().equals(genre))
                 .toList();
         if (result.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "[!] Album from genre: '" + genre + "' not found in database! ");
+            throw new NotFoundException("[!] Album from genre: '" + genre + "' not found in database! ");
         }
         return result.stream().map(a -> new GetAlbumDto(a.getId(),a.getName(),a.getArtist(),
                 a.getRelease_year(),a.getGenre(),a.getAlbum_info(),a.getStock().getStock_count())).toList();
@@ -161,7 +162,7 @@ public class AlbumServiceImpl implements AlbumService{
                 album.getStock().setStock_count(updateData.getStock_count());
             }
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"[!] Album at id: "+id+" doesn't exist!");
+            throw new NotFoundException("[!] Album at id: "+id+" doesn't exist!");
         }
         albumRepo.save(album);
 
@@ -174,7 +175,7 @@ public class AlbumServiceImpl implements AlbumService{
         if(albumRepo.existsById(id)){
             albumRepo.deleteById(id);
         }else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"[!] Cannot delete album "+id+" as it doesn't exist!");
+            throw new NotFoundException("[!] Cannot delete album "+id+" as it doesn't exist!");
         }
         return "✔ Album "+id+" deleted successfully!";
     }
