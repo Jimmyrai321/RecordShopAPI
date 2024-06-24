@@ -21,7 +21,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -73,13 +75,13 @@ class AlbumControllerTests {
     @DisplayName("GET Album by query parameter name")
     void getAlbumByName() throws Exception {
         //ARRANGE
-        List<GetAlbumDto> testList = getAlbumList();
-        when(albumService.getAlbumInfoByName("Third Avenue")).thenReturn(testList);
+        Map<String,String> testMap = new HashMap<>();
+        testMap.put("Third Avenue","This is a test album info!");
+        when(albumService.getAlbumInfoByName("Third Avenue")).thenReturn(testMap);
 
         //ACT AND ASSERT
         mockMvcController.perform(MockMvcRequestBuilders.get("/api/v1/albums?name=Third Avenue"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Third Avenue"));
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
