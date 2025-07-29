@@ -17,7 +17,7 @@ The API can be accessed at base URL: `http://localhost:8080/api/v1/albums`
 
 ### Endpoints
 
-$`\textcolor{green}{\text{GET}}`$
+[+ GET +]
 - `/albums`
 Returns a list of all albums in database
 
