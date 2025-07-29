@@ -20,7 +20,7 @@ The API can be accessed at base URL: `http://localhost:8080/api/v1/albums`
 #### **GET** `/albums`
 Returns a list of all albums in database
 
-```ruby
+```html
 [
     {
         "id": 1,
