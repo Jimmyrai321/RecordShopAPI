@@ -56,7 +56,7 @@ Response:
 ```
 ### <img width="34" height="15" alt="GET" src="https://github.com/user-attachments/assets/348be0ea-8445-49bd-9fd2-b8ee7e81d9ee" /> `/albums/:id`
 
-Returns a single album with given ID as path variable e.g http://localhost:8080/api/v1/albums/2`. Invalid ID will throw 404 and error message.
+Returns a single album with given ID as path variable e.g `http://localhost:8080/api/v1/albums/2`. Invalid ID will throw 404 and error message.
 
 Response:
 ```json
