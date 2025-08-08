@@ -1,7 +1,7 @@
  <img width="820" height="312" alt="3" src="https://github.com/user-attachments/assets/555dd2cc-486a-44c2-a81e-d64acdae59e9" />
  
 ## Project Brief
-The Rai Record store wants to modernise its inventory management from physical to digital. A modern digital inventory management systen would streamline operations and help Rai Records to compete with competitors. The store requires a strong robust RESTful API that querys, filters and updates it's inventory of records and the avaliable stock. Utilising Springboot to create RESTful endpoints following a MVC architecture.
+The Rai Record store wants to modernise its inventory management from physical to digital. A modern digital inventory management system would streamline operations and help Rai Records to compete with competitors. The store requires a strong robust RESTful API that querys, filters and updates it's inventory of records and the avaliable stock. Utilising Springboot to create RESTful endpoints following a MVC architecture.
 
 ## Technology
 - Spring Boot
